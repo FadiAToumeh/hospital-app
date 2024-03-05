@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart';
 
 class TestScreen extends StatefulWidget {
   const TestScreen({super.key});
@@ -14,6 +15,8 @@ class TestScreen extends StatefulWidget {
 class _TestScreenState extends State<TestScreen> {
 TextEditingController emailController = TextEditingController();
 TextEditingController passwordController = TextEditingController();
+
+
   Map<String, String> get headers => {
         "Accept": "application/vnd.api+json",
         "Content-Type": "application/vnd.api+json",
@@ -37,7 +40,10 @@ TextEditingController passwordController = TextEditingController();
               await signin(emailController.text,passwordController.text);
             },
             child: Text('Test')),
+            SizedBox(height: 30,),
+            ElevatedButton(onPressed: ()=> getUserData(), child: Text('show info')),
         ],
+        
       ),
     );
   }
@@ -55,8 +61,10 @@ TextEditingController passwordController = TextEditingController();
     if (response.statusCode == 200)
     {
       var res = json.decode(response.body);
-      var UID = res['data']['user']['id'];
+      var UID = res['data']['user']['id'].toString();
       var Uname =  res['data']['user']['name'];
+      var Uemail =  res['data']['user']['email'];
+      userData(Uname, Uemail, UID);
 
       print(UID.toString() + ' ' ":" " " + Uname);
       
@@ -65,5 +73,20 @@ TextEditingController passwordController = TextEditingController();
     {
       print('failed');
     }
+  }
+  void userData (String name , String email , String id) async
+  {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.setString('name', name);
+    await prefs.setString('email', email);
+    await prefs.setString('id', id);
+  }
+  void getUserData () async
+  {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    var name =await prefs.getString('name');
+    var email = await prefs.getString('email');
+    var id = prefs.getString('id');
+    print('$name'  '    '    '$email' '      ' "$id");
   }
 }
