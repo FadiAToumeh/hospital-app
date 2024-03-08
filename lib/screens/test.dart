@@ -13,6 +13,7 @@ class TestScreen extends StatefulWidget {
 
 
 class _TestScreenState extends State<TestScreen> {
+bool isLoggedIn = false;
 TextEditingController emailController = TextEditingController();
 TextEditingController passwordController = TextEditingController();
 
@@ -65,13 +66,12 @@ TextEditingController passwordController = TextEditingController();
       var Uname =  res['data']['user']['name'];
       var Uemail =  res['data']['user']['email'];
       userData(Uname, Uemail, UID);
-
       print(UID.toString() + ' ' ":" " " + Uname);
       
     }
     else
     {
-      print('failed');
+      print(json.decode(response.body)['message']);
     }
   }
   void userData (String name , String email , String id) async
@@ -80,6 +80,7 @@ TextEditingController passwordController = TextEditingController();
     await prefs.setString('name', name);
     await prefs.setString('email', email);
     await prefs.setString('id', id);
+    prefs.setBool('isLoggedIn', true);
   }
   void getUserData () async
   {
