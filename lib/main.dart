@@ -1,8 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:get/get_navigation/get_navigation.dart';
-import 'package:hospital_app_flutter/screens/dashboard_screen.dart';
-import 'package:hospital_app_flutter/screens/login_screen.dart';
-import 'package:hospital_app_flutter/screens/auth.dart';
 import 'package:hospital_app_flutter/tree.dart';
 
 void main() {

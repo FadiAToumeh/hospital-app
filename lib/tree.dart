@@ -22,10 +22,10 @@ class WidgetTree extends StatelessWidget {
     },);
     
   }
-  Future<bool> check () async
+  Future<bool?> check () async
   {
      SharedPreferences prefs = await SharedPreferences.getInstance();
-     bool? value = await prefs.setBool('isLoggedIn',true);
+     bool? value =  prefs.getBool('isLoggedIn');
      return value;
   }
 }
