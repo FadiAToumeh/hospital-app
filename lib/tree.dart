@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
 import 'package:hospital_app_flutter/screens/dashboard_screen.dart';
 import 'package:hospital_app_flutter/screens/login_screen.dart';
-import 'package:hospital_app_flutter/screens/test.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class WidgetTree extends StatelessWidget {
@@ -14,11 +12,11 @@ class WidgetTree extends StatelessWidget {
     return FutureBuilder(future: check(), builder: (context, snapshot) {
       if(snapshot.data == true)
       {
-        return DashboardScreen();
+        return const DashboardScreen();
       }
       else
       {
-        return TestScreen();
+        return const LoginScreen();
       }
       
     },);
