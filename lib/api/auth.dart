@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:math';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -30,7 +31,8 @@ Future<void> signIn  (String email , String password) async
       var UID = res['data']['user']['id'].toString();
       var Uname =  res['data']['user']['name'];
       var Uemail =  res['data']['user']['email'];
-      var token = res['token'].toString();
+      String token = json.decode(response.body)['data']['token'].toString();
+      print(token);
       saveToken(token);
       saveUserData(Uname, Uemail, UID);
       print(UID.toString() + ' ' ":" " " + Uname);
@@ -62,7 +64,7 @@ Future<void> signUp (String name , String email , String password) async
       var UID = res['data']['user']['id'].toString();
       var Uname =  res['data']['user']['name'];
       var Uemail =  res['data']['user']['email'];
-      var token = res['token'].toString();
+      var token = res['token'];
       saveToken(token);
       saveUserData(Uname, Uemail, UID);
      }
@@ -77,7 +79,7 @@ Future<void> signUp (String name , String email , String password) async
 Future<void> logOut () async
 {
   final SharedPreferences prefs = await SharedPreferences.getInstance();
-  String token = prefs.getString('token').toString();
+  String? token = prefs.getString('token');
   var response = await http.post(Uri.parse('http://10.0.2.2:8000/api/logout'),
      headers:{
         "Accept": "application/vnd.api+json",
@@ -91,7 +93,7 @@ Future<void> logOut () async
      }
      else 
      {
-      throw(json.decode(response.body)['message']);
+      throw  (json.decode(response.body)['message']);
      }
 }
 

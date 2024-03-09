@@ -4,8 +4,9 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:hospital_app_flutter/constants/Colors.dart';
+import 'package:hospital_app_flutter/screens/dashboard_screen.dart';
 import 'package:hospital_app_flutter/screens/signup_screen.dart';
-
+import 'package:hospital_app_flutter/api/auth.dart';
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
 
@@ -14,6 +15,7 @@ class LoginScreen extends StatefulWidget {
 }
 
 class _LoginScreenState extends State<LoginScreen> {
+  final Auth auth =  Auth();
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
   @override
@@ -66,7 +68,15 @@ class _LoginScreenState extends State<LoginScreen> {
             ),
             SizedBox(height:70),
             //sign in button
-            ElevatedButton(onPressed: ()=> print("Working"), // sign in logic here,
+            ElevatedButton(onPressed: () async{
+              try{
+                await auth.signIn(emailController.text, passwordController.text).then((value) => Get.off(DashboardScreen()));
+              }
+              catch(e){
+                print(e);
+              } 
+              
+            }, // sign in logic here,
              style: ButtonStyle(backgroundColor: MaterialStateProperty.all(mainBlue)),
              child: Text("Sign In", style: GoogleFonts.notoSans(color: Colors.white)),
              ),  

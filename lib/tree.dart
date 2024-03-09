@@ -10,7 +10,7 @@ class WidgetTree extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return FutureBuilder(future: check(), builder: (context, snapshot) {
-      if(snapshot.data == true)
+      if(snapshot.hasData)
       {
         return const DashboardScreen();
       }
@@ -22,10 +22,10 @@ class WidgetTree extends StatelessWidget {
     },);
     
   }
-  Future<bool?> check () async
+  Future check () async
   {
      SharedPreferences prefs = await SharedPreferences.getInstance();
-     bool? value =  prefs.getBool('isLoggedIn');
+     String? value =  prefs.getString('token').toString();
      return value;
   }
 }

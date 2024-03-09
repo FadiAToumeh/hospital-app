@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:hospital_app_flutter/api/auth.dart';
 import 'package:hospital_app_flutter/constants/colors.dart';
+import 'package:hospital_app_flutter/screens/login_screen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class DashboardScreen extends StatefulWidget {
@@ -10,6 +13,7 @@ class DashboardScreen extends StatefulWidget {
 }
 
 class _DashboardScreenState extends State<DashboardScreen> {
+  final auth = Auth();
   String? username = '';
   String? email = '';
   @override 
@@ -44,7 +48,14 @@ class _DashboardScreenState extends State<DashboardScreen> {
             //add logout function here
             Padding(
               padding: const EdgeInsets.symmetric(horizontal:50),
-              child: MaterialButton(onPressed: ()=> null , child: Text("Sign Out"),color: mainBlue,textColor: Colors.white,),
+              child: MaterialButton(onPressed: () async{
+                try {
+                 await auth.logOut().then((value) => Get.off(const LoginScreen()));
+                } catch (e) {
+                  print(e);
+                }
+              } , 
+              child: Text("Sign Out"),color: mainBlue,textColor: Colors.white,),
             ),
           ],
         ),
