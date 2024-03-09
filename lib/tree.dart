@@ -10,7 +10,7 @@ class WidgetTree extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return FutureBuilder(future: check(), builder: (context, snapshot) {
-      if(snapshot.hasData)
+      if(snapshot.data!='null')
       {
         return const DashboardScreen();
       }

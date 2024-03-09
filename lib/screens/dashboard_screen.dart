@@ -14,8 +14,8 @@ class DashboardScreen extends StatefulWidget {
 
 class _DashboardScreenState extends State<DashboardScreen> {
   final auth = Auth();
-  String? username = '';
-  String? email = '';
+  String? username ;
+  String? email ;
   @override 
   void initState ()
   {
@@ -27,6 +27,9 @@ class _DashboardScreenState extends State<DashboardScreen> {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     username = await prefs.getString('name');
     email = await prefs.getString('email');
+    setState(() {
+      
+    });
   }
   List Menu = [
     "Medicines",
@@ -52,7 +55,12 @@ class _DashboardScreenState extends State<DashboardScreen> {
                 try {
                  await auth.logOut().then((value) => Get.off(const LoginScreen()));
                 } catch (e) {
-                  print(e);
+                ScaffoldMessenger.of(context).showSnackBar
+                (SnackBar(content: Text('$e' , textAlign: TextAlign.center,),
+                backgroundColor: Colors.red,
+                padding: const EdgeInsets.all(15),
+                )
+              );
                 }
               } , 
               child: Text("Sign Out"),color: mainBlue,textColor: Colors.white,),
@@ -61,23 +69,32 @@ class _DashboardScreenState extends State<DashboardScreen> {
         ),
       ),
       backgroundColor: Colors.white,
-      body: GridView.builder(
-        itemCount: Menu.length,
-        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 3),
-        itemBuilder:(context, index){
-          return Column(
-            children: [
-              Container(
-                height: 100,
-            child: Card(
-              color: Color(0x1640D6).withOpacity(0.6),
-              child: Center(child: null),
+      body: SingleChildScrollView(
+        child: Column(
+          children:<Widget> [
+            const SizedBox( height: 25 ,),
+            Container(
+              margin:const EdgeInsets.symmetric(horizontal: 15),
+              decoration: BoxDecoration( 
+                color: mainBlue,
+                borderRadius:BorderRadius.circular(12.5),
+              ),
+              height: MediaQuery.of(context).size.height*0.2,
+              child: const Padding(
+                padding: EdgeInsets.symmetric(horizontal: 25),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  
+                  children: [
+                    Text('image or something else'),
+                    Text('data to write',style: TextStyle(color: Colors.white),),
+                  ],
+                ),
+              ),
             ),
-          ),
-          Text(Menu[index]),
-            ],
-          );
-      } ,),
+          ],
+        ),
+      ),
     );
   }
 }

@@ -73,7 +73,12 @@ class _LoginScreenState extends State<LoginScreen> {
                 await auth.signIn(emailController.text, passwordController.text).then((value) => Get.off(DashboardScreen()));
               }
               catch(e){
-                print(e);
+                ScaffoldMessenger.of(context).showSnackBar
+                (SnackBar(content: Text('$e' , textAlign: TextAlign.center,),
+                backgroundColor: Colors.red,
+                padding: const EdgeInsets.all(15),
+                )
+              );
               } 
               
             }, // sign in logic here,
