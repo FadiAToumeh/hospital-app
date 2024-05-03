@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:get/get_navigation/get_navigation.dart';
-import 'package:hospital_app_flutter/tree.dart';
+import 'package:hive_flutter/hive_flutter.dart';
+import 'package:hospital_app_flutter/widget_tree.dart';
 
-void main() {
+void main() async{
+  await Hive.initFlutter();
+  await Hive.openBox('userData');
   runApp(const MyApp());
 }
 

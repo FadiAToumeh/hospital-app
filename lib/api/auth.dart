@@ -1,10 +1,12 @@
 import 'dart:convert';
+import 'package:hive_flutter/hive_flutter.dart';
+import 'package:hospital_app_flutter/models/user_model.dart';
 import 'package:http/http.dart' as http;
-import 'package:shared_preferences/shared_preferences.dart';
+
 
 class Auth
 {
-  bool isLoggedIn = false;
+  final _userData = Hive.box('userData');
 
 
 Map<String, String> get headers => {
@@ -27,14 +29,13 @@ Future<void> signIn  (String email , String password) async
     if (response.statusCode == 200)
     {
       var res = json.decode(response.body);
-      var UID = res['data']['user']['id'].toString();
-      var Uname =  res['data']['user']['name'];
-      var Uemail =  res['data']['user']['email'];
+      final User user = User.fromJson(res['data']['user']);
       String token = json.decode(response.body)['data']['token'].toString();
       print(token);
-      saveToken(token);
-      saveUserData(Uname, Uemail, UID);
-      print(UID.toString() + ' ' ":" " " + Uname);
+      _userData.put('data' , [user.id , user.name , user.email , user.isDoctor]);
+      _userData.put('token',token);
+      //saveUserData(user.email, user.name, user.id.toString() , user.isDoctor);
+      print(_userData.get('data'));
       
     }
     else
@@ -45,7 +46,7 @@ Future<void> signIn  (String email , String password) async
 
 
 
-Future<void> signUp (String name , String email , String password) async
+Future<void> signUp (String name , String email , String password,int isDoctor) async
 {
   var response = await http.post(Uri.parse('http://10.0.2.2:8000/api/register'),
      headers:headers ,
@@ -53,19 +54,19 @@ Future<void> signUp (String name , String email , String password) async
       {
       'name' : name,
       'email' : email ,
-      'password' : password
+      'password' : password,
+      'password_confirmation':password,
+      'isDoctor':isDoctor,
       }
       ),
      );
      if (response.statusCode == 200)
      {
       var res = json.decode(response.body);
-      var UID = res['data']['user']['id'].toString();
-      var Uname =  res['data']['user']['name'];
-      var Uemail =  res['data']['user']['email'];
-      var token = res['token'];
-      saveToken(token);
-      saveUserData(Uname, Uemail, UID);
+      final User user = User.fromJson(res['data']['user']);
+      var token = res['data']['token'];
+      _userData.put('data', [user.id , user.name , user.email , user.isDoctor]);
+      _userData.put('token' , token);
      }
      else 
      {
@@ -77,8 +78,7 @@ Future<void> signUp (String name , String email , String password) async
 
 Future<void> logOut () async
 {
-  final SharedPreferences prefs = await SharedPreferences.getInstance();
-  String? token = prefs.getString('token');
+  String? token = _userData.get('token');
   var response = await http.post(Uri.parse('http://10.0.2.2:8000/api/logout'),
      headers:{
         "Accept": "application/vnd.api+json",
@@ -87,48 +87,11 @@ Future<void> logOut () async
      } ,);
      if (response.statusCode == 200)
      {
-      prefs.setBool('isLoggedIn', false);
-      prefs.remove('token');
+      _userData.delete('token');
+      _userData.delete('data');
      }
      else 
      {
       throw  (json.decode(response.body)['message']);
      }
-}
-
-
-
-void saveToken (String token) async
-{
-  final SharedPreferences prefs = await SharedPreferences.getInstance();
-  await prefs.setString('token', token);
-}
-
-
-
-//Future<String> getToken () async 
-//{
-//  final SharedPreferences prefs = await SharedPreferences.getInstance();
-//  String token =  prefs.getString('token').toString();
-//  return token;
-//}
-
-
-
-void saveUserData (String name , String email , String id) async
-  {
-    final SharedPreferences prefs = await SharedPreferences.getInstance();
-    await prefs.setString('name', name);
-    await prefs.setString('email', email);
-    await prefs.setString('id', id);
-    prefs.setBool('isLoggedIn', true);
-  }
-//void getUserData () async
-//  {
-//    final SharedPreferences prefs = await SharedPreferences.getInstance();
-//    var name = prefs.getString('name');
-//    var email = prefs.getString('email');
-//    var id = prefs.getString('id');
-//    print('$name'  '    '    '$email' '      ' "$id");
-//  }
-}
+}}

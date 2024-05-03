@@ -1,10 +1,11 @@
 // ignore_for_file: prefer_const_constructors
-
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 import 'package:hospital_app_flutter/constants/Colors.dart';
-import 'package:hospital_app_flutter/screens/dashboard_screen.dart';
+import 'package:hospital_app_flutter/screens/doctor_homescreen.dart';
+import 'package:hospital_app_flutter/screens/user_homescreen.dart';
 import 'package:hospital_app_flutter/screens/signup_screen.dart';
 import 'package:hospital_app_flutter/api/auth.dart';
 class LoginScreen extends StatefulWidget {
@@ -15,6 +16,7 @@ class LoginScreen extends StatefulWidget {
 }
 
 class _LoginScreenState extends State<LoginScreen> {
+  final _userData = Hive.box('userData');
   final Auth auth =  Auth();
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
@@ -70,14 +72,22 @@ class _LoginScreenState extends State<LoginScreen> {
             //sign in button
             ElevatedButton(onPressed: () async{
               try{
-                await auth.signIn(emailController.text, passwordController.text).then((value) => Get.off(DashboardScreen()));
+                await auth.signIn(emailController.text, passwordController.text);  
+                 
+                if (_userData.get('data')[3] == 1) {
+                  Get.off(()=> const DoctorHomeScreen());
+                }
+                else
+                {
+                  Get.off(()=> const UserHomeScreen());
+                }
               }
               catch(e){
                 ScaffoldMessenger.of(context).showSnackBar
                 (SnackBar(content: Text('$e' , textAlign: TextAlign.center,),
                 backgroundColor: Colors.red,
                 padding: const EdgeInsets.all(15),
-                )
+                ),
               );
               } 
               
@@ -96,4 +106,5 @@ class _LoginScreenState extends State<LoginScreen> {
       ),
     );
   }
+
 }

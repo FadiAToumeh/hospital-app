@@ -1,8 +1,11 @@
 // ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables
-
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:hospital_app_flutter/api/auth.dart';
 import 'package:hospital_app_flutter/constants/Colors.dart';
+import 'package:hospital_app_flutter/screens/doctor_homescreen.dart';
+import 'package:hospital_app_flutter/screens/user_homescreen.dart';
 
 class SignUpScreen extends StatefulWidget {
   const SignUpScreen({super.key});
@@ -12,10 +15,20 @@ class SignUpScreen extends StatefulWidget {
 }
 
 class _SignUpScreenState extends State<SignUpScreen> {
+  final Auth auth = Auth();
   bool isDoctor = false;
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
   final fullnameController = TextEditingController();
+
+  @override
+  void dispose ()
+  {
+    super.dispose();
+    fullnameController.dispose();
+    emailController.dispose();
+    passwordController.dispose();
+  }
   
   @override
   Widget build(BuildContext context) {
@@ -104,9 +117,25 @@ class _SignUpScreenState extends State<SignUpScreen> {
             //Sign Up , add funtions below 
             ElevatedButton(
               style: ButtonStyle(backgroundColor: MaterialStateProperty.all(mainBlue)),
-              onPressed:() => switch (isDoctor) {
-                true => print("true"),
-                false => print('false'),
+              onPressed:() {
+                try {
+               if(isDoctor)
+               {
+                auth.signUp(fullnameController.text.trim(), emailController.text.trim(), passwordController.text.trim(), 1).then((value) => Get.off(()=>const DoctorHomeScreen()));
+               }
+               else
+               {
+                auth.signUp(fullnameController.text.trim(), emailController.text.trim(), passwordController.text.trim(), 0).then((value) => Get.off(()=>UserHomeScreen()));
+               }
+              } 
+              catch (e) {
+              ScaffoldMessenger.of(context).showSnackBar
+                (SnackBar(content: Text('$e' , textAlign: TextAlign.center,),
+                backgroundColor: Colors.red,
+                padding: const EdgeInsets.all(15),
+                ),
+                );    
+              }
               },
               child: Text("Sign Up" , style: TextStyle(color: Colors.white),)
               ),

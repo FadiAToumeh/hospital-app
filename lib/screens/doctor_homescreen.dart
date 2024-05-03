@@ -1,46 +1,36 @@
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
+import 'package:get/get_core/src/get_main.dart';
+import 'package:get/get_navigation/get_navigation.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 import 'package:hospital_app_flutter/api/auth.dart';
 import 'package:hospital_app_flutter/constants/colors.dart';
 import 'package:hospital_app_flutter/screens/login_screen.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
-class DashboardScreen extends StatefulWidget {
-  const DashboardScreen({super.key});
+class DoctorHomeScreen extends StatefulWidget {
+  const DoctorHomeScreen({super.key});
 
   @override
-  State<DashboardScreen> createState() => _DashboardScreenState();
+  State<DoctorHomeScreen> createState() => _DoctorHomeScreenState();
 }
 
-class _DashboardScreenState extends State<DashboardScreen> {
-  final auth = Auth();
+class _DoctorHomeScreenState extends State<DoctorHomeScreen> {
+  final _userData = Hive.box('userData');
+  final Auth auth = Auth();
   String? username ;
   String? email ;
   @override 
   void initState ()
   {
     super.initState();
-    getData();
+    username = _userData.get('data')[1];
+    email = _userData.get('data')[2];
   }
-  void getData () async 
-  {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    username = await prefs.getString('name');
-    email = await prefs.getString('email');
-    setState(() {
-      
-    });
-  }
-  List Menu = [
-    "Medicines",
-    "Lab Tests",
-    "Consult Doctor",
-  ];
+  
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Dashboard"),
+        title: Text("Doctor Dashboard"),
       ),
       drawer: Drawer(
         child: ListView(
@@ -95,6 +85,6 @@ class _DashboardScreenState extends State<DashboardScreen> {
           ],
         ),
       ),
-    );
+      );
   }
 }

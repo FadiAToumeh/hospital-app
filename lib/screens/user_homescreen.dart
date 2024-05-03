@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:get/get_connect/http/src/utils/utils.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 import 'package:hospital_app_flutter/api/auth.dart';
 import 'package:hospital_app_flutter/constants/colors.dart';
 import 'package:hospital_app_flutter/screens/login_screen.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 class UserHomeScreen extends StatefulWidget {
   const UserHomeScreen({super.key});
@@ -14,6 +13,7 @@ class UserHomeScreen extends StatefulWidget {
 }
 
 class _UserHomeScreenState extends State<UserHomeScreen> {
+  final _userData = Hive.box('userData');
   final auth = Auth();
   String? username ;
   String? email ;
@@ -21,17 +21,10 @@ class _UserHomeScreenState extends State<UserHomeScreen> {
   void initState ()
   {
     super.initState();
-    getData();
+    username = _userData.get('data')[1];
+    email = _userData.get('data')[2];
   }
-  void getData () async 
-  {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    username = await prefs.getString('name');
-    email = await prefs.getString('email');
-    setState(() {
-      
-    });
-  }
+
   List Menu = [
     "Medicines",
     "Lab Tests",
@@ -41,7 +34,7 @@ class _UserHomeScreenState extends State<UserHomeScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Dashboard"),
+        title: Text("User Dashboard"),
       ),
       drawer: Drawer(
         child: ListView(
@@ -55,6 +48,9 @@ class _UserHomeScreenState extends State<UserHomeScreen> {
               child: MaterialButton(onPressed: () async{
                 try {
                  await auth.logOut().then((value) => Get.off(const LoginScreen()));
+                 setState(() {
+                   
+                 });
                 } catch (e) {
                 ScaffoldMessenger.of(context).showSnackBar
                 (SnackBar(content: Text('$e' , textAlign: TextAlign.center,),
